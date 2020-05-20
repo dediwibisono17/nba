@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <title>NBA Dummy</title>
+
+    <style>
+        #loading {
+            position: relative;
+            height: 100vh;
+        }
+        .pagination {
+            display: block;
+        }
+        .number {
+            display: inline-block;
+        }
+
+        h1{
+        margin-bottom: 1.25em;
+        }
+        #pagination-demo{
+        display: inline-block;
+        margin-bottom: 1.75em;
+        }
+        #pagination-demo li{
+        display: inline-block;
+        margin: 0 4px;
+        }
+
+        .page-content{
+        background: #eee;
+        display: inline-block;
+        padding: 10px;
+        width: 100%;
+        max-width: 660px;
+        }
+    </style>
+    
+</head>
+<body>
+    <!-- pagination -->
+    <div id="loading">
+        Mohon menunggu...
+    </div>
+    <div class="container">
+        <div class="pagination"></div>
+        <br>
+        
+        <ul id="pagination-demo" class="pagination-sm"></ul>
+        <div id="page-content" class="page-content">Page 1</div>
+        <div class="row" id="list">
+           
+        </div>
+
+        <label for="search">Player Name</label>
+        <input type="text" class="search" id="search" placeholder="James Harden" style="padding: 8px 16px; margin: 0 4px;"/>
+        <input type="button" class="btn-search" value="Search" onclick="findPlayer()">
+        <ul class="newList" id="newList"></ul>
+    </div>
+    <script src="js/jquery-1.12.4.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="js/jquery.twbsPagination.min.js"></script>
+    <script>
+        var team = {
+            "async": true,
+            "crossDomain": true,
+            "url": "https://free-nba.p.rapidapi.com/teams?page=0",
+            "method": "GET",
+            "headers": {
+                "x-rapidapi-host": "free-nba.p.rapidapi.com",
+                "x-rapidapi-key": "b66eb3153bmsh1d00af693516ac2p106275jsn0b6d5b9e5b20"
+            }
+        }
+
+        var players = {
+            "async": true,
+            "crossDomain": true,
+            "url": "https://free-nba.p.rapidapi.com/players",
+            "method": "GET",
+            "headers": {
+                "x-rapidapi-host": "free-nba.p.rapidapi.com",
+                "x-rapidapi-key": "b66eb3153bmsh1d00af693516ac2p106275jsn0b6d5b9e5b20"
+            }
+        }
+
+        function dataPlayers(cb){
+            $.ajax(players).done(response => {
+                $('#pagination-demo').twbsPagination({
+                    totalPages: response.meta.total_pages,
+                    visiblePages: 6,
+                    next: 'Next',
+                    prev: 'Prev',
+                    onPageClick: function (event, page) {
+                        //fetch content and render here
+                            $('#page-content').text('Page ' + page) + ' content here';
+                            cb({page})
+                        }
+                    });
+            });
+        }
+
+        dataPlayers(function(newData){
+            $.ajax({
+                async : true,
+                url : 'https://free-nba.p.rapidapi.com/players',
+                data: { page: newData.page, per_page: 25 },
+                method: 'GET',
+                beforeSend: function(){
+                    $("#loading").show();
+                    $('.container').hide();
+
+                },
+                complete: function(){
+                    $("#loading").hide();
+                    $('.container').show();
+                },
+                headers: {
+                    "x-rapidapi-host": "free-nba.p.rapidapi.com",
+                    "x-rapidapi-key": "b66eb3153bmsh1d00af693516ac2p106275jsn0b6d5b9e5b20"
+                },
+                success: (response => {
+                    var fname = response.data;
+                    fname.sort((a,b) => (a.first_name > b.first_name) ? 1 : ((b.first_name > a.first_name) ? -1 : 0));
+                    var li;
+                    $("#list").html('');
+                    var i;
+                    // let kosong = [];
+                    for (i=0; i<response.data.length; i++) {
+                        let fn = response.data[i].first_name;
+                        let ln = response.data[i].last_name;
+                        let full_name = fn + " " + ln;
+                        let team_name = response.data[i].team.full_name;
+                        
+                        li = $('<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 card border-light mb-3">');
+                        //li.append("<div class='card-body'>" + full_name + " - <b> "+ team_name +" </b></div>");
+                        li.append(`
+                            <div class="card-body"> 
+                                ${full_name} - <b>${team_name}</b> 
+                            </div>
+                        `)
+                        $("#list").append(li)
+                    }
+                    
+                })
+            }) 
+            error:(response => {
+                $("#loading").text('Data kosong')
+            })
+        })
+
+        function findPlayer() {
+            var value = $("#search").val();
+            $.ajax({
+                url: 'https://free-nba.p.rapidapi.com/players',
+                async: true,
+                data: {search: value},
+                method: 'GET',
+                headers: {
+                    "x-rapidapi-host": "free-nba.p.rapidapi.com",
+                    "x-rapidapi-key": "b66eb3153bmsh1d00af693516ac2p106275jsn0b6d5b9e5b20"
+                },
+                success: (response => {
+                    console.log(response.data.length);
+                    $(".pagination").hide();
+                    $(".list").hide();
+                    
+                    var newList;
+                    $("#newList").html('');
+                    if( response.data.length < 1 ) {
+                        $("#newList").append('<li>Data Tidak ditemukan</li>')
+                    } else {
+                        for (i=0 ; i<response.data.length ; i++) {
+                            newList = $('<li />');
+                            newList.append(`
+                                <span>${response.data[i].first_name} ${response.data[i].last_name} </span>
+                                - <b>${response.data[i].team.full_name}</b>
+                            `);
+                            $("#newList").append(newList)
+                        }
+                    }
+                })
+            });
+            error: (response=>{
+                $("#newList").append('<li>Server Error</li>')
+            })
+        }
+
+        
+        $(".search").keyup(function(){
+            if ($(".search").val() == "") {
+                $(".btn-search").hide();
+            } else {
+                $(".btn-search").show();
+            }
+        })
+    </script>
+</body>
+</html>
