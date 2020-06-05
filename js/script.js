@@ -153,18 +153,6 @@ function findPlayer() {
                 }
             }
 
-             // pagination
-            $('.newPagination-demo').twbsPagination({
-            totalPages: response.meta.total_pages,
-            visiblePages: 6,
-            next: 'Next',
-            prev: 'Prev',
-            onPageClick: function (event, page) {
-                //fetch content and render here
-                    // cb({page})
-                    console.log('still develop for next page')
-                }
-            });
         }),
         error: (response=>{
             $("#newList").append('<li>Server Error</li>')
