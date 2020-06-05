@@ -4,9 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
     <title>NBA Dummy</title>
 
     <style>
+        body {
+            font-family: 'Ubuntu', sans-serif;
+        }
+        .page-link, .page-item.disabled .page-link {
+            border: 1px solid white;
+            margin: 0 2px;
+        }
+        .page-item.active .page-link {
+            background: #fd7e14 !important;
+            border-color: #fd7e14;
+            border-radius: 4px;
+        }
+        .page-link {
+            color: #fd7e14;
+        }
+        .page-link:hover {
+            background: #ffcc80 !important;
+            border-color: #ffcc80;
+            border-radius: 4px;
+            color: white;
+        }
         .total-pages::before{
             content: 'Total Pages; ';
         }
@@ -19,10 +41,8 @@
         #loading {
             position: relative;
             height: 100vh;
+            margin: 0 15px;
         }
-        /* .pagination {
-            display: block;
-        } */
         .total {
             display: inline;
         }
@@ -83,30 +103,10 @@
 </head>
 <body>
     <!-- pagination -->
-    <div id="loading">
-        <h3 class="text-center" style="margin: 16px 0;">
-            Mohon menunggu...
-        </h3>
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12 col-sm-3">
-                    <span class="skeleton-box"></span>
-                </div>
-                <div class="col-xs-12 col-sm-3">
-                    <span class="skeleton-box"></span>
-                </div>
-                <div class="col-xs-12 col-sm-3">
-                    <span class="skeleton-box"></span>
-                </div>
-                <div class="col-xs-12 col-sm-3">
-                    <span class="skeleton-box"></span>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="container">
         <div class="pagination"></div>
         <br>
+        <h2 class="text-center">NBA Players</h2>
         <div class="row">
             <div class="col-12 col-md-4">
                 <div class="input-group mb-3">
@@ -122,20 +122,45 @@
         </div>
         
         <ul id="pagination-demo" class="pagination-sm"></ul>
-        <br>
-        <div class="total">
-            <span class="total-pages"></span>
-        </div>
-        <div class="container">
-            <div class="list row" id="list">
-               
+    </div>
+    <div id="loading">
+        <div class="row row-cols-1 row-cols-lg-4">
+            <div class="col">
+                <span class="skeleton-box"></span>
+            </div>
+            <div class="col">
+                <span class="skeleton-box"></span>
+            </div>
+            <div class="col">
+                <span class="skeleton-box"></span>
+            </div>
+            <div class="col">
+                <span class="skeleton-box"></span>
             </div>
         </div>
-
-        <ul class="newPagination-demo" class="pagination-sm"></ul>
-        <div class="container">
-            <div class="newList row" id="newList">
-
+    </div>
+    <div class="container">
+        <div class="container thumbs">
+            <div class="total">
+                <span class="total-pages"></span>
+            </div>
+            <div class="container">
+                <div class="list row" id="list">
+                   
+                </div>
+            </div>
+            <ul class="newPagination-demo" class="pagination-sm"></ul>
+            <div class="container">
+                <div class="newList row" id="newList">
+    
+                </div><br>
+                <div class="clearfix">
+                    <button class="backHome btn btn-small btn-primary">Refresh Page</button>
+                    <div style="float: right;">
+                        API: <a href="https://free-nba.p.rapidapi.com/players">https://free-nba.p.rapidapi.com/players</a>
+                    </div>
+                </div>
+                <br><br>
             </div>
         </div>
     </div>
@@ -174,7 +199,6 @@
                     prev: 'Prev',
                     onPageClick: function (event, page) {
                         //fetch content and render here
-                            $('#page-content').text('Page ' + page) + ' content here';
                             cb({page})
                         }
                     });
@@ -191,11 +215,11 @@
                 method: 'GET',
                 beforeSend: function(){
                     $("#loading").show();
-                    $('.container').hide();
+                    $('.thumbs').hide();
                 },
                 complete: function(){
                     $("#loading").hide();
-                    $('.container').show();
+                    $('.thumbs').show();
                 },
                 headers: {
                     "x-rapidapi-host": "free-nba.p.rapidapi.com",
@@ -242,11 +266,11 @@
                 data: {search: value},
                 beforeSend: function(){
                     $("#loading").show();
-                    $('.container').hide();
+                    $('.thumbs').hide();
                 },
                 complete: function(){
                     $("#loading").hide();
-                    $('.container').show();
+                    $('.thumbs').show();
                     $('.total-pages').hide();
                 },
                 method: 'GET',
@@ -269,11 +293,11 @@
                     onPageClick: function (event, page) {
                         //fetch content and render here
                             // cb({page})
-                            console.log(page)
+                            console.log('still develop for next page')
                         }
                     });
                     
-                    $(".total").append('<p>Ini ya: '+ page +'')
+                    // $(".total").append('<p>Ini ya: '+ page +'')
                     var fname = response.data;
                     fname.sort((a,b) => (a.first_name > b.first_name) ? 1 : ((b.first_name > a.first_name) ? -1 : 0));
                     var newList;
@@ -307,7 +331,7 @@
         
         $("#search").keyup(function() {
             var x = $('.btn-search');
-            if($(this).val() == "") {
+            if($(this).val() == "" || $(this).val().length < 4 ) {
                 x.css('visibility','hidden')
             } else {
                 x.css('visibility','visible')
