@@ -133,7 +133,7 @@ function findPlayer() {
             var newList;
             $("#newList").html('');
             if( response.data.length < 1 ) {
-                $("#newList").append('<div>Data Tidak ditemukan</div>')
+                $("#newList").append('<img src="img/bola.png" style="text-align:center;width:40px;height:40px;"><br><h4 style="margin:4px">Player Not Found</h4>')
             } else {
                 for (i=0 ; i<response.data.length ; i++) {
                     let fn = response.data[i].first_name;
