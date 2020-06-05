@@ -7,12 +7,24 @@
     <title>NBA Dummy</title>
 
     <style>
+        .total-pages::before{
+            content: 'Total Pages; ';
+        }
+        p {
+            margin-bottom: .1rem !important;
+        }
+        .card {
+            background-color: #ffcc80 !important;
+        }
         #loading {
             position: relative;
             height: 100vh;
         }
-        .pagination {
+        /* .pagination {
             display: block;
+        } */
+        .total {
+            display: inline;
         }
         .number {
             display: inline-block;
@@ -21,13 +33,12 @@
         h1{
         margin-bottom: 1.25em;
         }
-        #pagination-demo{
+        #pagination-demo, #newPagination-demo{
         display: inline-block;
         margin-bottom: 1.75em;
         }
-        #pagination-demo li{
-        display: inline-block;
-        margin: 0 4px;
+        #pagination-demo li, #newPagination-demo li{
+            display: inline-block;
         }
 
         .page-content{
@@ -37,28 +48,96 @@
         width: 100%;
         max-width: 660px;
         }
+
+        /* skeleton */
+        .skeleton-box {
+        display: inline-block;
+        height: 114px;
+        width: 100%;
+        margin: 10px 0;
+        border-radius: 4px;
+        position: relative;
+        overflow: hidden;
+        background-color: #dddbdd;}
+
+        .skeleton-box::after {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            transform: translateX(-100%);
+            background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 0));
+            animation: shimmer 2s infinite;
+            content: "";
+        }
+
+        @keyframes shimmer {
+            100% {
+            transform: translateX(100%);
+            }
+        }
+
     </style>
     
 </head>
 <body>
     <!-- pagination -->
     <div id="loading">
-        Mohon menunggu...
+        <h3 class="text-center" style="margin: 16px 0;">
+            Mohon menunggu...
+        </h3>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12 col-sm-3">
+                    <span class="skeleton-box"></span>
+                </div>
+                <div class="col-xs-12 col-sm-3">
+                    <span class="skeleton-box"></span>
+                </div>
+                <div class="col-xs-12 col-sm-3">
+                    <span class="skeleton-box"></span>
+                </div>
+                <div class="col-xs-12 col-sm-3">
+                    <span class="skeleton-box"></span>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="container">
         <div class="pagination"></div>
         <br>
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroup-sizing-default">Player Name</span>
+                    </div>
+                    <input type="text" class="form-control" aria-label="Sizing example input" id="search" aria-describedby="inputGroup-sizing-default">
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <input type="button" class="btn-search btn btn-primary" value="Search" onclick="findPlayer()" data-toggle="modal" data-target="#exampleModalCenter" style="visibility: hidden;">
+            </div>
+        </div>
         
         <ul id="pagination-demo" class="pagination-sm"></ul>
-        <div id="page-content" class="page-content">Page 1</div>
-        <div class="row" id="list">
-           
+        <br>
+        <div class="total">
+            <span class="total-pages"></span>
+        </div>
+        <div class="container">
+            <div class="list row" id="list">
+               
+            </div>
         </div>
 
-        <label for="search">Player Name</label>
-        <input type="text" class="search" id="search" placeholder="James Harden" style="padding: 8px 16px; margin: 0 4px;"/>
-        <input type="button" class="btn-search" value="Search" onclick="findPlayer()">
-        <ul class="newList" id="newList"></ul>
+        <ul class="newPagination-demo" class="pagination-sm"></ul>
+        <div class="container">
+            <div class="newList row" id="newList">
+
+            </div>
+        </div>
     </div>
     <script src="js/jquery-1.12.4.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
@@ -99,6 +178,8 @@
                             cb({page})
                         }
                     });
+                
+                $(".total-pages").text(response.meta.total_pages)
             });
         }
 
@@ -111,7 +192,6 @@
                 beforeSend: function(){
                     $("#loading").show();
                     $('.container').hide();
-
                 },
                 complete: function(){
                     $("#loading").hide();
@@ -131,70 +211,111 @@
                     for (i=0; i<response.data.length; i++) {
                         let fn = response.data[i].first_name;
                         let ln = response.data[i].last_name;
+                        let pos = response.data[i].position;
                         let full_name = fn + " " + ln;
                         let team_name = response.data[i].team.full_name;
                         
-                        li = $('<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 card border-light mb-3">');
-                        //li.append("<div class='card-body'>" + full_name + " - <b> "+ team_name +" </b></div>");
+                        li = $('<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 card border-light">');
                         li.append(`
-                            <div class="card-body"> 
-                                ${full_name} - <b>${team_name}</b> 
+                            <div class="card-body text-center">
+                                <p>${full_name}</p> 
+                                <b>${team_name}</b><br>
+                                <small>${pos}</small>
                             </div>
                         `)
                         $("#list").append(li)
                     }
                     
+                }),
+                error:(response => {
+                    $("#loading").text('Data kosong')
                 })
             }) 
-            error:(response => {
-                $("#loading").text('Data kosong')
-            })
         })
 
         function findPlayer() {
             var value = $("#search").val();
+            let page;
             $.ajax({
                 url: 'https://free-nba.p.rapidapi.com/players',
                 async: true,
                 data: {search: value},
+                beforeSend: function(){
+                    $("#loading").show();
+                    $('.container').hide();
+                },
+                complete: function(){
+                    $("#loading").hide();
+                    $('.container').show();
+                    $('.total-pages').hide();
+                },
                 method: 'GET',
                 headers: {
                     "x-rapidapi-host": "free-nba.p.rapidapi.com",
                     "x-rapidapi-key": "b66eb3153bmsh1d00af693516ac2p106275jsn0b6d5b9e5b20"
                 },
                 success: (response => {
-                    console.log(response.data.length);
                     $(".pagination").hide();
                     $(".list").hide();
+
+                    page = response.meta.total_pages;
+
+                    // pagination
+                    $('.newPagination-demo').twbsPagination({
+                    totalPages: response.meta.total_pages,
+                    visiblePages: 6,
+                    next: 'Next',
+                    prev: 'Prev',
+                    onPageClick: function (event, page) {
+                        //fetch content and render here
+                            // cb({page})
+                            console.log(page)
+                        }
+                    });
                     
+                    $(".total").append('<p>Ini ya: '+ page +'')
+                    var fname = response.data;
+                    fname.sort((a,b) => (a.first_name > b.first_name) ? 1 : ((b.first_name > a.first_name) ? -1 : 0));
                     var newList;
                     $("#newList").html('');
                     if( response.data.length < 1 ) {
-                        $("#newList").append('<li>Data Tidak ditemukan</li>')
+                        $("#newList").append('<div>Data Tidak ditemukan</div>')
                     } else {
                         for (i=0 ; i<response.data.length ; i++) {
-                            newList = $('<li />');
+                            let fn = response.data[i].first_name;
+                            let ln = response.data[i].last_name;
+                            let pos = response.data[i].position;
+                            let full_name = fn + " " + ln;
+                            let team_name = response.data[i].team.full_name;
+                            newList = $('<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 card border-light">');
                             newList.append(`
-                                <span>${response.data[i].first_name} ${response.data[i].last_name} </span>
-                                - <b>${response.data[i].team.full_name}</b>
+                                <div class="card-body text-center">
+                                    <p>${full_name}</p> 
+                                    <b>${team_name}</b><br>
+                                    <small>${pos}</small>
+                                </div>
                             `);
                             $("#newList").append(newList)
                         }
                     }
+                }),
+                error: (response=>{
+                    $("#newList").append('<li>Server Error</li>')
                 })
             });
-            error: (response=>{
-                $("#newList").append('<li>Server Error</li>')
-            })
         }
-
         
-        $(".search").keyup(function(){
-            if ($(".search").val() == "") {
-                $(".btn-search").hide();
+        $("#search").keyup(function() {
+            var x = $('.btn-search');
+            if($(this).val() == "") {
+                x.css('visibility','hidden')
             } else {
-                $(".btn-search").show();
+                x.css('visibility','visible')
             }
+        });
+
+        $(".backHome").click(function(){
+            location.reload();
         })
     </script>
 </body>

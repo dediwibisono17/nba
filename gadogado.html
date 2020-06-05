@@ -24,53 +24,33 @@
    </div>
 
     <script src="js/jquery-1.12.4.min.js"></script>
-    <script src="js/jquery.twbsPagination.min.js"></script>
     <script>
-        var $pagination = $('#pagination'),
-        totalRecords = 0,
-        records = [],
-        displayRecords = [],
-        recPerPage = 10,
-        page = 1,
-        totalPages = 0;
+        // var response = $.ajax({
+        //             async: false,
+        //             url: 'https://jsonplaceholder.typicode.com/todos/1',
+        //             type: 'GET',
+        //             data: {page: idQuery}
+        //         }).responseText;
+
+        // var data = JSON.parse(response);
+        // var idQuery = data.id;
+
+        // console.log(data);
+        // console.log(idQuery);
+
+        let idQuery = '';
+
         $.ajax({
-            url: "http://dummy.restapiexample.com/api/v1/employees",
-            async: true,
-            dataType: 'json',
-            success: function (data) {
-                        records = data;
-                        console.log(data);
-                        totalRecords = records.length;
-                        totalPages = Math.ceil(totalRecords / recPerPage);
-                        apply_pagination();
-            }
-        });
+        url: 'https://jsonplaceholder.typicode.com/todos/1',
+        type: 'GET',
+        data: {page: idQuery},
+        success:(response => {
+            idQuery = response.number;
+        })
+        })
+        
+        
 
-        function generate_table() {
-            var tr;
-            $('#emp_body').html('');
-            for (var i = 0; i < displayRecords.length; i++) {
-                    tr = $('<tr/>');
-                    tr.append("<td>" + displayRecords[i].employee_name + "</td>");
-                    tr.append("<td>" + displayRecords[i].employee_salary + "</td>");
-                    tr.append("<td>" + displayRecords[i].employee_age + "</td>");
-                    $('#emp_body').append(tr);
-            }
-        }
-
-        function apply_pagination() {
-            $pagination.twbsPagination({
-                    totalPages: totalPages,
-                    visiblePages: 6,
-                    onPageClick: function (event, page) {
-                        displayRecordsIndex = Math.max(page - 1, 0) * recPerPage;
-                        endRec = (displayRecordsIndex) + recPerPage;
-                        
-                        displayRecords = records.slice(displayRecordsIndex, endRec);
-                        generate_table();
-                    }
-            });
-        }
     </script>
 </body>
 </html>
