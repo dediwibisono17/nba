@@ -115,17 +115,17 @@ function findPlayer() {
             page = response.meta.total_pages;
 
             // pagination
-            $('.newPagination-demo').twbsPagination({
-            totalPages: response.meta.total_pages,
-            visiblePages: 6,
-            next: 'Next',
-            prev: 'Prev',
-            onPageClick: function (event, page) {
-                //fetch content and render here
-                    // cb({page})
-                    console.log('still develop for next page')
-                }
-            });
+            // $('.newPagination-demo').twbsPagination({
+            // totalPages: response.meta.total_pages,
+            // visiblePages: 6,
+            // next: 'Next',
+            // prev: 'Prev',
+            // onPageClick: function (event, page) {
+            //     //fetch content and render here
+            //         // cb({page})
+            //         console.log('still develop for next page')
+            //     }
+            // });
             
             // $(".total").append('<p>Ini ya: '+ page +'')
             var fname = response.data;
@@ -152,6 +152,19 @@ function findPlayer() {
                     $("#newList").append(newList)
                 }
             }
+
+             // pagination
+            $('.newPagination-demo').twbsPagination({
+            totalPages: response.meta.total_pages,
+            visiblePages: 6,
+            next: 'Next',
+            prev: 'Prev',
+            onPageClick: function (event, page) {
+                //fetch content and render here
+                    // cb({page})
+                    console.log('still develop for next page')
+                }
+            });
         }),
         error: (response=>{
             $("#newList").append('<li>Server Error</li>')
