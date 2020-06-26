@@ -11,39 +11,45 @@
 </head>
 <body>
     <!-- pagination -->
-    <div class="container">
-        <div class="pagination"></div>
-        <br>
-        <h2 class="text-center">NBA Players</h2>
+    <div class="container shadownya">
         <div class="row">
-            <div class="col-12 col-md-4">
-                <div class="input-group mb-3">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-default">Player Name</span>
+            <div class="col col-sm-12 col-md-6 offset-md-3 header-top">
+                <div class="pagination"></div>
+                <br>
+                <h2 class="text-center">NBA Players</h2>
+                <div class="row">
+                    <div class="col-12 col-md-8">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="inputGroup-sizing-default">Player Name</span>
+                            </div>
+                            <input type="text" class="form-control" aria-label="Sizing example input" id="search" aria-describedby="inputGroup-sizing-default" placeholder="Minimum 4 Characters">
+                        </div>
                     </div>
-                    <input type="text" class="form-control" aria-label="Sizing example input" id="search" aria-describedby="inputGroup-sizing-default" placeholder="Minimum 4 Characters">
+                    <div class="col-12 col-md-4">
+                        <input type="button" class="btn-search btn btn-primary" value="Search" onclick="findPlayer()" data-toggle="modal" data-target="#exampleModalCenter" style="visibility: hidden;">
+                    </div>
                 </div>
-            </div>
-            <div class="col-12 col-md-4">
-                <input type="button" class="btn-search btn btn-primary" value="Search" onclick="findPlayer()" data-toggle="modal" data-target="#exampleModalCenter" style="visibility: hidden;">
+                
+                <ul id="pagination-demo" class="pagination-sm"></ul>
             </div>
         </div>
-        
-        <ul id="pagination-demo" class="pagination-sm"></ul>
     </div>
-    <div id="loading">
-        <div class="row row-cols-1 row-cols-lg-4">
-            <div class="col">
-                <span class="skeleton-box"></span>
-            </div>
-            <div class="col">
-                <span class="skeleton-box"></span>
-            </div>
-            <div class="col">
-                <span class="skeleton-box"></span>
-            </div>
-            <div class="col">
-                <span class="skeleton-box"></span>
+    <div id="loading" class="container">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-lg-4">
+                <div class="col">
+                    <span class="skeleton-box"></span>
+                </div>
+                <div class="col">
+                    <span class="skeleton-box"></span>
+                </div>
+                <div class="col">
+                    <span class="skeleton-box"></span>
+                </div>
+                <div class="col">
+                    <span class="skeleton-box"></span>
+                </div>
             </div>
         </div>
     </div>

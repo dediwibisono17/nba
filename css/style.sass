@@ -1,11 +1,28 @@
 body 
     font-family: 'Ubuntu', sans-serif !important 
-        
+    input
+        &:focus
+            border-color: #fd7e14 !important
+            box-shadow: none !important
+    .shadownya
+        box-shadow: 0 14px 24px 5px gray
+        border-radius: 0 0 50% 50%  
+        z-index: 99
+        background: linear-gradient(to bottom, aliceblue, white)
+    .btn
+        &-primary
+            &:focus
+                box-shadow: none
+                background: blue
+    .header
+        &-top
+            font-weight: bold
     .page-link, 
     .disabled 
         .page-link 
             border: 1px solid white
-            margin: 0 2px
+            margin: 0px
+            font-size: 12px
     
     .active 
         .page-link 
